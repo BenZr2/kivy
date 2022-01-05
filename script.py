@@ -7,9 +7,6 @@ from kivy.uix.button import Button
 
 import requests
 import json
-import time
-from colorama import Fore
-from colorama import Style
 from weakness import weakness
 
 r = requests.get("https://temtem-api.mael.tech/api/temtems")
@@ -19,33 +16,58 @@ data = r.json()
 class MyGrid(GridLayout):
     def __init__(self, **kwargs):
         super(MyGrid, self).__init__(**kwargs)
-        self.cols = 1
+        self.cols = 2
 
         self.temName = (Label(text='Input name of tem: ', font_size='25sp'))
         self.add_widget(self.temName)
+
+        self.temName2 = (Label(text='Input name of tem: ', font_size='25sp'))
+        self.add_widget(self.temName2)
 
         self.inputName = TextInput(multiline=False, size_hint=(0.5, 0.4))
         self.inputName.bind(on_text_validate=self.on_enter)
         self.add_widget(self.inputName)
 
-        self.submit = Button(text='cLiCk BuTtOn', font_size=20)
-        self.submit.bind(on_press=self.pressed)
-        # self.add_widget(self.submit)
-
-    def pressed(self, instance):
-        temName = self.inputName.text
-        self.temName.text = self.search_tem(temName)
-        self.inputName.text = ""
+        self.inputName2 = TextInput(multiline=False, size_hint=(0.5, 0.4))
+        self.inputName2.bind(on_text_validate=self.on_enter2)
+        self.add_widget(self.inputName2)
 
     def on_enter(self, instance):
         temName = self.inputName.text
         multiplicator = self.search_tem(temName)
         multiplicator = [e.split("-") for e in multiplicator]
-        self.temName.text = temName.title() + ":\n"
+        self.temName.text = temName.title() + "\n\nEffective:\n"
         for e in multiplicator:
-            self.temName.text += e[0] + ' ' + e[1] + "\n"
+            if int(e[0][0]) == 4:
+                self.temName.text += e[0] + ' ' + e[1] + "\n"
+        for e in multiplicator:
+            if int(e[0][0]) == 2:
+                self.temName.text += e[0] + ' ' + e[1] + "\n"
+        self.temName.text += "\nNot effective:\n"
+        for e in multiplicator:
+            try:
+                if int(e[0][2]) == 5:
+                    self.temName.text += e[0] + ' ' + e[1] + "\n"
+            except:
+                pass
+        for e in multiplicator:
+            try:
+                if int(e[0][2]) == 2:
+                    self.temName.text += e[0] + ' ' + e[1] + "\n"
+            except:
+                pass
 
         self.inputName.text = ""
+
+    def on_enter2(self, instance):
+        temName = self.inputName2.text
+        multiplicator = self.search_tem(temName)
+        multiplicator = [e.split("-") for e in multiplicator]
+        self.temName2.text = temName.title() + ":\n"
+        for e in multiplicator:
+            self.temName2.text += e[0] + ' ' + e[1] + "\n"
+
+        self.inputName2.text = ""
 
     def search_tem(self, temName):
         search_temtem = temName
@@ -72,13 +94,9 @@ class MyGrid(GridLayout):
                     if multiplicator == 4 or multiplicator == 2:
                         output.append(str(multiplicator) +
                                       'x-' + multp.title())
-                        print(Fore.GREEN + str(multiplicator) +
-                              'x\t- ' + multp.title() + Style.RESET_ALL)
                     if multiplicator == 0.5 or multiplicator == 0.25:
                         output.append(str(multiplicator) +
                                       'x-' + multp.title())
-                        print(Fore.RED + str(multiplicator) +
-                              'x\t- ' + multp.title() + Style.RESET_ALL)
         return output
 
 
