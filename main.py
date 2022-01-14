@@ -63,9 +63,26 @@ class MyGrid(GridLayout):
         temName = self.inputName2.text
         multiplicator = self.search_tem(temName)
         multiplicator = [e.split("-") for e in multiplicator]
-        self.temName2.text = temName.title() + ":\n"
+        self.temName2.text = temName.title() + "\n\nEffective:\n"
         for e in multiplicator:
-            self.temName2.text += e[0] + ' ' + e[1] + "\n"
+            if int(e[0][0]) == 4:
+                self.temName2.text += e[0] + ' ' + e[1] + "\n"
+        for e in multiplicator:
+            if int(e[0][0]) == 2:
+                self.temName2.text += e[0] + ' ' + e[1] + "\n"
+        self.temName2.text += "\nNot effective:\n"
+        for e in multiplicator:
+            try:
+                if int(e[0][2]) == 5:
+                    self.temName2.text += e[0] + ' ' + e[1] + "\n"
+            except:
+                pass
+        for e in multiplicator:
+            try:
+                if int(e[0][2]) == 2:
+                    self.temName2.text += e[0] + ' ' + e[1] + "\n"
+            except:
+                pass
 
         self.inputName2.text = ""
 
